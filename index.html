@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<!-- Coding by Djélika -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Boxicons CSS -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="²asha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+   
+
+    <title>Side Navigation Bar in HTML CSS JavaScript</title>
+    
+  </head>
+  <body>
+    <!-- navbar -->
+    <!-- sidebar -->
+    <nav class="sidebar">
+      <h2 class="titre">STARTAIZEN</h2>
+      <div class="logo_item">
+        <i class="bx bx-menu" id="sidebarOpen"></i>
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="log">
+
+      </div>
+
+      <div class="navbar_content">
+        <i class="bi bi-grid"></i>
+        <i class="bx bx-sun" id="darkLight"></i>
+      </div>
+      <div class="menu_content">
+        <ul class="menu_items">
+          <div class="menu_title menu_dahsboard"></div>
+          <!-- duplicate or remove this li tag if you want to add or remove navlink with submenu -->
+          <!-- start -->
+          <li class="item">
+            <div href="#" class="nav_link submenu_item">
+              <span class="navlink_icon">
+                <i class="bx bx-home-alt"></i>
+              </span>
+              <span class="navlink">STARTAIZEN</span>
+              <i class="bx bx-chevron-right arrow-left"></i>
+            </div>
+
+            <ul class="menu_items submenu">
+              <a href="#" class="nav_link sublink">Présentation</a>
+              <a href="#" class="nav_link sublink">Utilisation</a>
+            </ul>
+          </li>
+          <!-- end -->
+
+          <!-- duplicate this li tag if you want to add or remove navlink with submenu -->
+          <!-- start -->
+          <li class="item">
+            <div href="#" class="nav_link submenu_item">
+              <span class="navlink_icon">
+                <i class="bx bx-grid-alt"></i>
+              </span>
+              <span class="navlink">Réseaux Sociaux</span>
+              <i class="bx bx-chevron-right arrow-left"></i>
+            </div>
+
+            <ul class="menu_items submenu">
+              <a href="#" class="nav_link sublink"><i class="fab fa-facebook"></i></a>
+              <a href="#" class="nav_link sublink"><i class="fab fa-linkedin"></i></a>
+              <a href="#" class="nav_link sublink"><i class="fab fa-whatsapp"></i></a>
+            </ul>
+          </li>
+        </ul>
+
+        <!-- Sidebar Open / Close -->
+        <div class="bottom_content">
+          <div class="bottom expand_sidebar">
+            <span> Expand</span>
+            <i class="bx bx-log-in"></i>
+          </div>
+          <div class="bottom collapse_sidebar">
+            <span> Collapse</span>
+            <i class="bx bx-log-out"></i>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div id="app">
+      <div class="container-fluid h-100">
+        <div class="row justify-content-center h-100">
+          <div class="col-md-8 col-xl-6 chat">
+            <div class="card">
+              <div class="card-header msg_head">
+                <div class="d-flex bd-highlight">
+                  <div class="user_info">
+                    <span>Hey Entrepreneur!</span>
+                  </div>
+                </div>
+              </div>
+              <div id="messageFormeight" class="card-body msg_card_body" ref="messageContainer">
+                <div v-for="(message, index) in messages" :key="index" v-html="message"></div>
+              </div>
+              <div class="card-footer">
+                <form id="messageArea" class="input-group" @submit.prevent="submitMessage">
+                  <input v-model="newMessage" type="text" id="text" name="msg" placeholder="Pose ta question" autocomplete="off" class="form-control type_msg" required />
+                  <div class="input-group-append">
+                    <button type="submit" id="send" class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vue.js -->
+    <script src="https://unpkg.com/vue@2.6.14"></script>
+    <!-- Axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script>
+      new Vue({
+        el: '#app',
+        data: {
+          newMessage: '',
+          messages: [
+             '<div class="d-flex justify-content-start mb-4"><div class="msg_cotainer">Bienvenue dans STARTAIZEN ! Comment puis-je vous aider aujourd\'hui ?<span class="msg_time">9:00</span></div><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="log"></div></div>'
+            ]
+        },
+        methods: {
+          submitMessage() {
+            const date = new Date();
+            const hour = date.getHours();
+            const minute = date.getMinutes();
+            const str_time = hour + ':' + minute;
+            const rawText = this.newMessage;
+
+            const userHtml = `<div class="d-flex justify-content-end mb-4"><div class="msg_cotainer_send">${rawText}<span class="msg_time_send">${str_time}</span></div></div>`;
+
+            
+
+            this.messages.push(userHtml);
+    
+            this.newMessage = '';
+
+            this.$nextTick(() => {
+              this.scrollToBottom();
+            });
+
+            axios.post('/get', { msg: rawText })
+    .then(response => {
+      const reply = response.data.reply;
+
+      const botHtml = `<div class="d-flex justify-content-start mb-4"><div class="msg_cotainer">${reply}<span class="msg_time">9:00</span></div><div class="img_cont_msg"><img src="logo.png" class="rounded-circle user_img_msg"></div></div>`;
+      
+      this.messages.push(botHtml);
+      
+      this.$nextTick(() => {
+        this.scrollToBottom();
+      });
+    })
+    .catch(error => {
+      console.error(error);
+    });  
+          },
+          scrollToBottom() {
+            const container = this.$refs.messageContainer;
+            container.scrollTop = container.scrollHeight;
+          }
+
+        }
+      });
+    </script>
+       <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>
